@@ -1,111 +1,71 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include<stdio.h>
+#include<stdlib.h>
 
-struct node
-{
-    int co,po;
-    struct node *addr;
-};
-typedef struct node *NODE;
-
-NODE insertend (NODE start ,int co,int po)
- {
-
-    NODE temp ,cur;
-    temp=(NODE)malloc(sizeof(struct node));
-    temp-> co=co;
-    temp->po=po;
-    temp->addr=NULL;
-    if(start==NULL)
-        return temp;
-    cur=start;
-    while(cur->addr!=NULL)
-        cur=cur->addr;
-    cur->addr=temp;
-    return start;
- }
-void display(NODE start)
-{
-    NODE temp;
-    if(start==NULL)
-    {
-        printf("\n polynomial is empty.\n");
-    }
-   else
-   {
-       temp = start;
-       while(temp->addr!=NULL)
-       {
-           printf(" %dx^%d+",temp->co,temp->po);
-           temp=temp->addr;
-       }
-       printf("%dx^%d\n",temp->co,temp->po);
-
-   }
-}
-NODE addterm(NODE res,int co,int po)
-{
-    NODE temp,cur;
-    temp=(NODE)malloc(sizeof(struct node));
-    temp-> co=co;
-    temp->po=po;
-    temp->addr=NULL;
-    if(res==NULL)
-    {
-        return temp;
-    }
-    cur=res;
-    while (cur!=NULL)
-    {
-        if(cur->po=po)
-        {
-            cur->co=cur->co+co;
-            return res;
+void heapify(int a[10],int n){
+    int i,k,v,j,flag=0;
+    for(i=n/2;i>=1;i--){
+        k=i;
+        v=a[k];
+        while(!flag && 2*k<=n){
+            j=2*k;
+            if(j<n){
+                if(a[j]<a[j+1]){
+                    j+=1;
+                }
+            }
+            if(v>=a[j]){
+                flag=1;
+            }
+            else{
+                a[k]=a[j];
+                k=j;
+            }
         }
-        cur=cur->addr;
+        a[k]=v;
+        flag=0;
     }
-    res=insertend(res,co,po);
-    return res;
 }
-NODE multiply(NODE poly1,NODE poly2)
-{
-    NODE p1,p2,res=NULL;
-    for(p1=poly1;p1!=NULL;p1=p1->addr)
-    {
-        for(p2=poly2;p2!=NULL;p2=p2->addr)
-        {
-            res=addterm(res,p1->co*p2->co,p1->po+p2->po);
+
+int main(){
+    int n,a[10],i,ch;
+    for(;;){
+        printf("\n1.Create Heap\n2.Extract max\n3.Exit");
+        printf("\nRead choice: ");
+        scanf("%d",&ch);
+        switch(ch){
+            case 1:{
+                printf("\nRead number of elements: ");
+                scanf("%d",&n);
+                printf("\nRead elements\n");
+                for(i=1;i<=n;i++){
+                    scanf("%d",&a[i]);
+                }
+                heapify(a,n);
+                printf("\nElements after constructing heap\n");
+                for(i=1;i<=n;i++){
+                    printf("%d\t",a[i]);
+                }
+                break;
+            }
+            case 2:{
+                if(n>=1){
+                    printf("\nKey deleted is %d",a[1]);
+                    a[1]=a[n];
+                    n-=1;
+                    heapify(a,n);
+                    printf("\nHeap after deleting\n");
+                    for(i=1;i<=n;i++){
+                        printf("%d\t",a[i]);
+                    }
+                }
+                else{
+                    printf("\nNo element to delete");
+                }
+                break;
+            }
+            default:
+                exit(0);
         }
     }
-    return res;
-}
-int main()
-{
-    NODE poly1=NULL,poly2=NULL,poly=NULL;
-    int co,po,i,n,m;
-    printf("\n enter number of terms of first polynomial:");
-    scanf("%d",&n);
-    for(i=1;i<=n;i++)
-    {
-        printf("read co&po of %d term:",i);
-        scanf("%d%d",&co,&po);
-        poly1=insertend(poly1,co,po);
-    }
-    printf("\n first polynomial is \n");
-    display (poly1);
-    printf("\n enter number of terms of second  polynomial:");
-    scanf("%d",&m);
-    for(i=1;i<=m;i++)
-    {
-        printf("read co&po of %d term:",i);
-        scanf("%d%d",&co,&po);
-        poly2=insertend(poly2,co,po);
-    }
-    printf("\n second polynomial is \n");
-    display (poly2);
-    poly=multiply(poly1,poly2);
-    printf("\n resultant polynomial is \n");
-    display(poly);
     return 0;
-
 }
