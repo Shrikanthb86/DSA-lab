@@ -1,71 +1,67 @@
-#include<stdio.h>
-#include<stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
 
-void heapify(int a[10],int n){
-    int i,k,v,j,flag=0;
-    for(i=n/2;i>=1;i--){
-        k=i;
-        v=a[k];
-        while(!flag && 2*k<=n){
-            j=2*k;
-            if(j<n){
-                if(a[j]<a[j+1]){
-                    j+=1;
-                }
-            }
-            if(v>=a[j]){
-                flag=1;
-            }
-            else{
-                a[k]=a[j];
-                k=j;
-            }
-        }
-        a[k]=v;
-        flag=0;
+int count = 0;
+
+void merge(int a[], int l, int m, int r)
+{
+    int i, j, k;
+    int b[10];
+
+    i = l;
+    j = m + 1;
+    k = l;
+
+    while (i <= m && j <= r)
+    {
+        count++;
+        if (a[i] < a[j])
+            b[k++] = a[i++];
+        else
+            b[k++] = a[j++];
+    }
+
+    while (i <= m)
+        b[k++] = a[i++];
+
+    while (j <= r)
+        b[k++] = a[j++];
+
+    for (i = l; i <= r; i++)
+        a[i] = b[i];
+}
+
+void mergesort(int a[], int l, int r)
+{
+    int m;
+    if (l < r)
+    {
+        m = (l + r) / 2;
+        mergesort(a, l, m);
+        mergesort(a, m + 1, r);
+        merge(a, l, m, r);
     }
 }
 
-int main(){
-    int n,a[10],i,ch;
-    for(;;){
-        printf("\n1.Create Heap\n2.Extract max\n3.Exit");
-        printf("\nRead choice: ");
-        scanf("%d",&ch);
-        switch(ch){
-            case 1:{
-                printf("\nRead number of elements: ");
-                scanf("%d",&n);
-                printf("\nRead elements\n");
-                for(i=1;i<=n;i++){
-                    scanf("%d",&a[i]);
-                }
-                heapify(a,n);
-                printf("\nElements after constructing heap\n");
-                for(i=1;i<=n;i++){
-                    printf("%d\t",a[i]);
-                }
-                break;
-            }
-            case 2:{
-                if(n>=1){
-                    printf("\nKey deleted is %d",a[1]);
-                    a[1]=a[n];
-                    n-=1;
-                    heapify(a,n);
-                    printf("\nHeap after deleting\n");
-                    for(i=1;i<=n;i++){
-                        printf("%d\t",a[i]);
-                    }
-                }
-                else{
-                    printf("\nNo element to delete");
-                }
-                break;
-            }
-            default:
-                exit(0);
-        }
-    }
+int main()
+{
+    int i, n, a[10];
+
+    printf("\nRead array size:\n");
+    scanf("%d", &n);
+
+    printf("\nRead array elements:\n");
+    for (i = 0; i < n; i++)
+        scanf("%d", &a[i]);
+
+    mergesort(a, 0, n - 1);
+
+    printf("\nSorted elements are:\n");
+    for (i = 0; i < n; i++)
+        printf("%d\t", a[i]);
+
+    printf("\nTotal number of comparisons = %d\n", count);
+
     return 0;
 }
+
